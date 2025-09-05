@@ -6,15 +6,17 @@ import cookieParser from 'cookie-parser'
 const app = express();
 
 
-app.use(cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true
-  }));
+app.use(cors());
   
 app.use(cookieParser())
 app.use(express.json());
 
-
+app.get("/",(req,res)=>{
+  res.json({
+    success : true,
+    msg : "Backend Connected"
+  })
+})
 app.use("/auth", authRoutes);
 app.use("/user",userRoutes);
 

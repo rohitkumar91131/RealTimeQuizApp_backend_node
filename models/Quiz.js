@@ -1,20 +1,15 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../config/db.js';
-import User from './User.js';
+import mongoose from "mongoose";
 
-export const Quiz = sequelize.define('Quiz', {
-  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-  quiz_name: { type: DataTypes.STRING(255), allowNull: false },
-  quiz_type: { type: DataTypes.STRING(50), allowNull: false }, // 'personal' or 'host'
-  host_user_id: { type: DataTypes.UUID, references: { model: 'users', key: 'id' } },
-  description: { type: DataTypes.TEXT },
-  status: { type: DataTypes.STRING(50), defaultValue: 'upcoming' }, // 'upcoming', 'active', 'finished'
-}, {
-  timestamps: true,
-  underscored: true,
-});
+const quizSchema = new mongoose.Schema(
+  {
+    quiz_name: { type: String, required: true },
+    quiz_type: { type: String, enum: ["personal", "host"], required: true },
+    host_user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    description: { type: String },
+    status: { type: String, enum: ["upcoming", "active", "finished"], default: "upcoming" },
+  },
+  { timestamps: true }
+);
 
-User.hasMany(Quiz, { foreignKey: 'host_user_id' });
-Quiz.belongsTo(User, { foreignKey: 'host_user_id' });
-
+const Quiz = mongoose.model("Quiz", quizSchema);
 export default Quiz;
